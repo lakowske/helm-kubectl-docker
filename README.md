@@ -6,7 +6,7 @@ so that a user can clone a git repo.
 ```bash
 # Create a secret and use it to clone a private git repo.
 
-kubectl create secret generic ssh-secret --from-file=ssh-privatekey=$HOME/.ssh/id_rsa --from-file=ssh-publickey=$HOME/.ssh/id_rsa.pub
+kubectl create secret generic ssh-secret --from-file=id_rsa=$HOME/.ssh/id_rsa --from-file=id_rsa.pub=$HOME/.ssh/id_rsa.pub
 ```
 
 
