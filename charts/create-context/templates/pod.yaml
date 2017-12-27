@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ template "create-context.fullname" . }}
+  labels:
+    app: {{ template "create-context.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  restartPolicy: Never
+  volumes:
+  - name: docker-socket
+    hostPath:
+      path: /var/run/docker.sock
+  - secret:
+      defaultMode: 0400
+      secretName: ssh-secret
+    name: secret-volume
+  - name: scripts-config-volume
+    configMap:
+      name: scripts
+  containers:
+    - name: {{ .Chart.Name }}
+      stdin: true
+      tty: true
+      image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      volumeMounts:
+      - name: docker-socket
+        mountPath: /var/run/docker.sock
+      - name: secret-volume
+        mountPath: /root/.ssh
+        readOnly: true
+      - name: scripts-config-volume
+        mountPath: /scripts
+      command: ["/bin/bash", "-c", "{{ .Values.image.cmd }}"]
+      resources:
+{{ toYaml .Values.resources | indent 8 }}

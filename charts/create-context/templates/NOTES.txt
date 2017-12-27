@@ -1,0 +1,4 @@
+1. Attach to the shell with kubectl attach
+
+kubectl attach -i -t {{ .Release.Name }}-{{ template "create-context.name" . }}
+
